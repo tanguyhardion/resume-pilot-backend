@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "A minimal serverless API using LangChain to generate or fill in resumes.",
   "dependencies": {
-    "@langchain/openai": "^0.6.7",
-    "langchain": "^0.3.30",
+    "@langchain/openai": "^0.6.9",
+    "langchain": "^0.3.31",
+    "puppeteer": "^24.17.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^17.0.42",
-    "@vercel/node": "^2.9.6",
-    "typescript": "^4.7.3"
+    "@types/node": "^24.3.0",
+    "@vercel/node": "^5.3.13",
+    "typescript": "^5.9.2"
   }
 }
