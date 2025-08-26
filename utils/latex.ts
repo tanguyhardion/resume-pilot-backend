@@ -102,15 +102,15 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
   let filled = template;
 
   // Basic personal info
-  filled = filled.replace(/{{NAME}}/g, data.name || 'Your Name');
-  filled = filled.replace(/{{EMAIL}}/g, data.email || 'your.email@example.com');
-  filled = filled.replace(/{{PHONE}}/g, data.phone || '+1 (555) 123-4567');
-  filled = filled.replace(/{{LOCATION}}/g, data.location || 'City, State');
-  filled = filled.replace(/{{LINKEDIN}}/g, data.linkedin || 'https://linkedin.com/in/yourprofile');
-  filled = filled.replace(/{{GITHUB}}/g, data.github || 'https://github.com/yourusername');
+  filled = filled.replace(/{{NAME}}/g, data.name);
+  filled = filled.replace(/{{EMAIL}}/g, data.email);
+  filled = filled.replace(/{{PHONE}}/g, data.phone);
+  filled = filled.replace(/{{LOCATION}}/g, data.location);
+  filled = filled.replace(/{{LINKEDIN}}/g, data.linkedin);
+  filled = filled.replace(/{{GITHUB}}/g, data.github);
 
   // Summary
-  filled = filled.replace(/{{SUMMARY}}/g, data.summary || 'Professional summary goes here.');
+  filled = filled.replace(/{{SUMMARY}}/g, data.summary);
 
   // Experience section
   const experienceLatex = data.experience?.map(exp => 
@@ -120,7 +120,7 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
     ${exp.description.map(desc => `    \\item ${desc}`).join('\\n')}
     \\end{itemize}
     \\vspace{0.2cm}`
-  ).join('\\n\\n') || 'Experience details go here.';
+  ).join('\\n\\n') || '';
   
   filled = filled.replace(/{{EXPERIENCE}}/g, experienceLatex);
 
@@ -128,12 +128,12 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
   const educationLatex = data.education?.map(edu =>
     `\\textbf{${edu.degree}} \\hfill ${edu.year} \\\\
     \\textit{${edu.institution}}`
-  ).join('\\n\\n') || 'Education details go here.';
+  ).join('\\n\\n') || '';
   
   filled = filled.replace(/{{EDUCATION}}/g, educationLatex);
 
   // Skills section
-  const skillsLatex = data.skills?.join(', ') || 'Technical skills go here.';
+  const skillsLatex = data.skills?.join(', ') || '';
   filled = filled.replace(/{{SKILLS}}/g, skillsLatex);
 
   // Projects section
@@ -142,7 +142,7 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
     ${project.description} \\\\
     \\textit{Technologies: ${project.technologies.join(', ')}}
     \\vspace{0.2cm}`
-  ).join('\\n\\n') || 'Projects go here.';
+  ).join('\\n\\n') || '';
   
   filled = filled.replace(/{{PROJECTS}}/g, projectsLatex);
 
@@ -152,11 +152,11 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
 export function fillCoverLetterTemplate(template: string, data: any): string {
   let filled = template;
 
-  filled = filled.replace(/{{NAME}}/g, data.name || 'Your Name');
-  filled = filled.replace(/{{EMAIL}}/g, data.email || 'your.email@example.com');
-  filled = filled.replace(/{{PHONE}}/g, data.phone || '+1 (555) 123-4567');
-  filled = filled.replace(/{{LOCATION}}/g, data.location || 'City, State');
-  filled = filled.replace(/{{COVER_LETTER_CONTENT}}/g, data.content || 'Cover letter content goes here.');
+  filled = filled.replace(/{{NAME}}/g, data.name);
+  filled = filled.replace(/{{EMAIL}}/g, data.email);
+  filled = filled.replace(/{{PHONE}}/g, data.phone);
+  filled = filled.replace(/{{LOCATION}}/g, data.location);
+  filled = filled.replace(/{{COVER_LETTER_CONTENT}}/g, data.content);
 
   return filled;
 }

@@ -41,10 +41,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Load and fill LaTeX template
     const template = loadCoverLetterTemplate();
     const coverLetterData = {
-      name: personalInfo?.name || 'Your Name',
-      email: personalInfo?.email || 'your.email@example.com',
-      phone: personalInfo?.phone || '+1 (555) 123-4567',
-      location: personalInfo?.location || 'City, State',
+      name: personalInfo?.name,
+      email: personalInfo?.email,
+      phone: personalInfo?.phone,
+      location: personalInfo?.location,
       content: coverLetterContent
     };
     
