@@ -1,104 +1,20 @@
-import { LatexTemplate, ResumeData } from '../types';
-
-export const RESUME_TEMPLATE = `
-\\documentclass[letterpaper,11pt]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{geometry}
-\\usepackage{enumitem}
-\\usepackage{titlesec}
-\\usepackage{hyperref}
-
-\\geometry{margin=0.75in}
-\\setlist[itemize]{leftmargin=*,noitemsep,topsep=0pt}
-\\titleformat{\\section}{\\large\\bfseries}{}{0em}{}[\\titlerule]
-\\titlespacing*{\\section}{0pt}{0.5\\baselineskip}{0.3\\baselineskip}
-
-\\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    urlcolor=blue
-}
-
-\\begin{document}
-
-\\begin{center}
-    {\\Large\\textbf{{{NAME}}}} \\\\
-    {{EMAIL}} $|$ {{PHONE}} $|$ {{LOCATION}} \\\\
-    \\href{{{LINKEDIN}}}{LinkedIn} $|$ \\href{{{GITHUB}}}{GitHub}
-\\end{center}
-
-\\section*{Professional Summary}
-{{SUMMARY}}
-
-\\section*{Experience}
-{{EXPERIENCE}}
-
-\\section*{Education}
-{{EDUCATION}}
-
-\\section*{Technical Skills}
-{{SKILLS}}
-
-\\section*{Projects}
-{{PROJECTS}}
-
-\\end{document}
-`;
-
-export const COVER_LETTER_TEMPLATE = `
-\\documentclass[letterpaper,11pt]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{geometry}
-\\usepackage{hyperref}
-
-\\geometry{margin=1in}
-
-\\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    urlcolor=blue
-}
-
-\\begin{document}
-
-\\begin{flushright}
-{{NAME}} \\\\
-{{EMAIL}} \\\\
-{{PHONE}} \\\\
-{{LOCATION}} \\\\
-\\today
-\\end{flushright}
-
-\\vspace{1cm}
-
-Dear Hiring Manager,
-
-{{COVER_LETTER_CONTENT}}
-
-Sincerely,
-
-{{NAME}}
-
-\\end{document}
-`;
+import { LatexTemplate, ResumeData } from "../types";
+import { RESUME_TEMPLATE } from "../data/resumeTemplate";
+import { COVER_LETTER_TEMPLATE } from "../data/coverLetterTemplate";
 
 export function loadResumeTemplate(): LatexTemplate {
   return {
     content: RESUME_TEMPLATE.trim(),
-    placeholders: ['NAME', 'EMAIL', 'PHONE', 'LOCATION', 'LINKEDIN', 'GITHUB', 'SUMMARY', 'EXPERIENCE', 'EDUCATION', 'SKILLS', 'PROJECTS']
   };
 }
 
 export function loadCoverLetterTemplate(): LatexTemplate {
   return {
     content: COVER_LETTER_TEMPLATE.trim(),
-    placeholders: ['NAME', 'EMAIL', 'PHONE', 'LOCATION', 'COVER_LETTER_CONTENT']
   };
 }
 
-export function fillLatexTemplate(template: string, data: ResumeData): string {
+export function fillResumeTemplate(template: string, data: ResumeData): string {
   let filled = template;
 
   // Basic personal info
@@ -113,37 +29,49 @@ export function fillLatexTemplate(template: string, data: ResumeData): string {
   filled = filled.replace(/{{SUMMARY}}/g, data.summary);
 
   // Experience section
-  const experienceLatex = data.experience?.map(exp => 
-    `\\textbf{${exp.title}} \\hfill ${exp.duration} \\\\
+  const experienceLatex =
+    data.experience
+      ?.map(
+        (exp) =>
+          `\\textbf{${exp.title}} \\hfill ${exp.duration} \\\\
     \\textit{${exp.company}} \\\\
     \\begin{itemize}
-    ${exp.description.map(desc => `    \\item ${desc}`).join('\\n')}
+    ${exp.description.map((desc) => `    \\item ${desc}`).join("\\n")}
     \\end{itemize}
     \\vspace{0.2cm}`
-  ).join('\\n\\n') || '';
-  
+      )
+      .join("\\n\\n") || "";
+
   filled = filled.replace(/{{EXPERIENCE}}/g, experienceLatex);
 
   // Education section
-  const educationLatex = data.education?.map(edu =>
-    `\\textbf{${edu.degree}} \\hfill ${edu.year} \\\\
+  const educationLatex =
+    data.education
+      ?.map(
+        (edu) =>
+          `\\textbf{${edu.degree}} \\hfill ${edu.year} \\\\
     \\textit{${edu.institution}}`
-  ).join('\\n\\n') || '';
-  
+      )
+      .join("\\n\\n") || "";
+
   filled = filled.replace(/{{EDUCATION}}/g, educationLatex);
 
   // Skills section
-  const skillsLatex = data.skills?.join(', ') || '';
+  const skillsLatex = data.skills?.join(", ") || "";
   filled = filled.replace(/{{SKILLS}}/g, skillsLatex);
 
   // Projects section
-  const projectsLatex = data.projects?.map(project =>
-    `\\textbf{${project.name}} \\\\
+  const projectsLatex =
+    data.projects
+      ?.map(
+        (project) =>
+          `\\textbf{${project.name}} \\\\
     ${project.description} \\\\
-    \\textit{Technologies: ${project.technologies.join(', ')}}
+    \\textit{Technologies: ${project.technologies.join(", ")}}
     \\vspace{0.2cm}`
-  ).join('\\n\\n') || '';
-  
+      )
+      .join("\\n\\n") || "";
+
   filled = filled.replace(/{{PROJECTS}}/g, projectsLatex);
 
   return filled;
@@ -169,95 +97,116 @@ export function latexToHtml(latex: string): string {
   let html = latex;
 
   // Remove LaTeX preamble and document setup
-  html = html.replace(/\\documentclass\[.*?\]\{.*?\}/g, '');
-  html = html.replace(/\\usepackage(\[.*?\])?\{.*?\}/g, '');
-  html = html.replace(/\\geometry\{.*?\}/g, '');
-  html = html.replace(/\\setlist\[.*?\]\{.*?\}/g, '');
-  html = html.replace(/\\titleformat\{.*?\}\{.*?\}\{.*?\}\{.*?\}\{.*?\}(\[.*?\])?/g, '');
-  html = html.replace(/\\titlespacing\*?\{.*?\}\{.*?\}\{.*?\}\{.*?\}/g, '');
-  html = html.replace(/\\hypersetup\{[^}]*\}/gs, '');
+  html = html.replace(/\\documentclass\[.*?\]\{.*?\}/g, "");
+  html = html.replace(/\\usepackage(\[.*?\])?\{.*?\}/g, "");
+  html = html.replace(/\\geometry\{.*?\}/g, "");
+  html = html.replace(/\\setlist\[.*?\]\{.*?\}/g, "");
+  html = html.replace(
+    /\\titleformat\{.*?\}\{.*?\}\{.*?\}\{.*?\}\{.*?\}(\[.*?\])?/g,
+    ""
+  );
+  html = html.replace(/\\titlespacing\*?\{.*?\}\{.*?\}\{.*?\}\{.*?\}/g, "");
+  html = html.replace(/\\hypersetup\{[^}]*\}/gs, "");
 
   // Document structure
-  html = html.replace(/\\begin\{document\}/g, '');
-  html = html.replace(/\\end\{document\}/g, '');
+  html = html.replace(/\\begin\{document\}/g, "");
+  html = html.replace(/\\end\{document\}/g, "");
 
   // Center environment with proper CSS class
   html = html.replace(/\\begin\{center\}/g, '<div class="center">');
-  html = html.replace(/\\end\{center\}/g, '</div>');
+  html = html.replace(/\\end\{center\}/g, "</div>");
 
   // Flush environments
-  html = html.replace(/\\begin\{flushright\}/g, '<div style="text-align: right;">');
-  html = html.replace(/\\end\{flushright\}/g, '</div>');
-  html = html.replace(/\\begin\{flushleft\}/g, '<div style="text-align: left;">');
-  html = html.replace(/\\end\{flushleft\}/g, '</div>');
+  html = html.replace(
+    /\\begin\{flushright\}/g,
+    '<div style="text-align: right;">'
+  );
+  html = html.replace(/\\end\{flushright\}/g, "</div>");
+  html = html.replace(
+    /\\begin\{flushleft\}/g,
+    '<div style="text-align: left;">'
+  );
+  html = html.replace(/\\end\{flushleft\}/g, "</div>");
 
   // Section headers
-  html = html.replace(/\\section\*\{([^}]+)\}/g, '<h2>$1</h2>');
-  html = html.replace(/\\subsection\*\{([^}]+)\}/g, '<h3>$1</h3>');
+  html = html.replace(/\\section\*\{([^}]+)\}/g, "<h2>$1</h2>");
+  html = html.replace(/\\subsection\*\{([^}]+)\}/g, "<h3>$1</h3>");
 
   // Text formatting with better handling of nested commands
-  html = html.replace(/\\Large\\textbf\{([^}]+)\}/g, '<h1>$1</h1>');
-  html = html.replace(/\\textbf\{([^}]+)\}/g, '<strong>$1</strong>');
-  html = html.replace(/\\textit\{([^}]+)\}/g, '<em>$1</em>');
-  html = html.replace(/\\texttt\{([^}]+)\}/g, '<code>$1</code>');
-  html = html.replace(/\\emph\{([^}]+)\}/g, '<em>$1</em>');
+  html = html.replace(/\\Large\\textbf\{([^}]+)\}/g, "<h1>$1</h1>");
+  html = html.replace(/\\textbf\{([^}]+)\}/g, "<strong>$1</strong>");
+  html = html.replace(/\\textit\{([^}]+)\}/g, "<em>$1</em>");
+  html = html.replace(/\\texttt\{([^}]+)\}/g, "<code>$1</code>");
+  html = html.replace(/\\emph\{([^}]+)\}/g, "<em>$1</em>");
 
   // Handle font size commands
-  html = html.replace(/\\Large/g, '');
-  html = html.replace(/\\large/g, '');
-  html = html.replace(/\\small/g, '');
-  html = html.replace(/\\tiny/g, '');
+  html = html.replace(/\\Large/g, "");
+  html = html.replace(/\\large/g, "");
+  html = html.replace(/\\small/g, "");
+  html = html.replace(/\\tiny/g, "");
 
   // Lists with proper nesting support
-  html = html.replace(/\\begin\{itemize\}/g, '<ul>');
-  html = html.replace(/\\end\{itemize\}/g, '</ul>');
-  html = html.replace(/\\begin\{enumerate\}/g, '<ol>');
-  html = html.replace(/\\end\{enumerate\}/g, '</ol>');
-  
+  html = html.replace(/\\begin\{itemize\}/g, "<ul>");
+  html = html.replace(/\\end\{itemize\}/g, "</ul>");
+  html = html.replace(/\\begin\{enumerate\}/g, "<ol>");
+  html = html.replace(/\\end\{enumerate\}/g, "</ol>");
+
   // Handle list items with better spacing
-  html = html.replace(/\\item\s+/g, '<li>');
-  html = html.replace(/<li>([^<]*?)(?=<li>|<\/[uo]l>)/gs, '<li>$1</li>');
+  html = html.replace(/\\item\s+/g, "<li>");
+  html = html.replace(/<li>([^<]*?)(?=<li>|<\/[uo]l>)/gs, "<li>$1</li>");
 
   // Handle line breaks and spacing more accurately
-  html = html.replace(/\\\\\\\\/g, '<br><br>');
-  html = html.replace(/\\\\\s*/g, '<br>');
-  html = html.replace(/\\newline/g, '<br>');
-  html = html.replace(/\\linebreak/g, '<br>');
+  html = html.replace(/\\\\\\\\/g, "<br><br>");
+  html = html.replace(/\\\\\s*/g, "<br>");
+  html = html.replace(/\\newline/g, "<br>");
+  html = html.replace(/\\linebreak/g, "<br>");
 
   // Spacing commands
-  html = html.replace(/\\vspace\{([^}]*)\}/g, '<div style="margin-bottom: $1;"></div>');
-  html = html.replace(/\\hspace\{([^}]*)\}/g, '<span style="margin-left: $1;"></span>');
+  html = html.replace(
+    /\\vspace\{([^}]*)\}/g,
+    '<div style="margin-bottom: $1;"></div>'
+  );
+  html = html.replace(
+    /\\hspace\{([^}]*)\}/g,
+    '<span style="margin-left: $1;"></span>'
+  );
 
   // Handle horizontal fills and positioning
   html = html.replace(/\\hfill\s*/g, '<span class="date-range">');
-  html = html.replace(/<span class="date-range">([^<]*?)(?=<br>|$)/g, '<span class="date-range">$1</span>');
+  html = html.replace(
+    /<span class="date-range">([^<]*?)(?=<br>|$)/g,
+    '<span class="date-range">$1</span>'
+  );
 
   // Links and URLs
   html = html.replace(/\\href\{([^}]+)\}\{([^}]+)\}/g, '<a href="$1">$2</a>');
   html = html.replace(/\\url\{([^}]+)\}/g, '<a href="$1">$1</a>');
 
   // Special characters and symbols
-  html = html.replace(/\\\$/g, '');
-  html = html.replace(/\$\|\$/g, ' | ');
-  html = html.replace(/\$\s*\|\s*\$/g, ' | ');
-  html = html.replace(/\\&/g, '&');
-  html = html.replace(/\\%/g, '%');
-  html = html.replace(/\\#/g, '#');
-  html = html.replace(/\\_/g, '_');
-  html = html.replace(/\\\{/g, '{');
-  html = html.replace(/\\\}/g, '}');
-  html = html.replace(/\\textbackslash/g, '\\');
+  html = html.replace(/\\\$/g, "");
+  html = html.replace(/\$\|\$/g, " | ");
+  html = html.replace(/\$\s*\|\s*\$/g, " | ");
+  html = html.replace(/\\&/g, "&");
+  html = html.replace(/\\%/g, "%");
+  html = html.replace(/\\#/g, "#");
+  html = html.replace(/\\_/g, "_");
+  html = html.replace(/\\\{/g, "{");
+  html = html.replace(/\\\}/g, "}");
+  html = html.replace(/\\textbackslash/g, "\\");
 
   // Date commands
-  html = html.replace(/\\today/g, new Date().toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }));
+  html = html.replace(
+    /\\today/g,
+    new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  );
 
   // Clean up whitespace and empty elements
-  html = html.replace(/\n\s*\n/g, '\n');
-  html = html.replace(/\s+/g, ' ');
+  html = html.replace(/\n\s*\n/g, "\n");
+  html = html.replace(/\s+/g, " ");
   html = html.trim();
 
   // Structure the content better for PDF generation
@@ -295,7 +244,10 @@ function structureContentForPdf(html: string): string {
 /**
  * Enhanced HTML wrapper with better CSS for professional documents
  */
-export function createEnhancedHtmlWrapper(content: string, title: string = 'Resume'): string {
+export function createEnhancedHtmlWrapper(
+  content: string,
+  title: string = "Resume"
+): string {
   return `
 <!DOCTYPE html>
 <html lang="en">

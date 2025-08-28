@@ -35,7 +35,6 @@ export interface GenerateResponse {
 
 export interface LatexTemplate {
   content: string;
-  placeholders: string[];
 }
 
 export interface ResumeData {

@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateMasterPassword, setCorsHeaders, handleOptionsRequest, createErrorResponse, createSuccessResponse } from '../utils/auth';
 import { ResumeAI } from '../utils/ai';
-import { loadResumeTemplate, fillLatexTemplate, latexToHtml } from '../utils/latex';
+import { loadResumeTemplate, fillResumeTemplate, latexToHtml } from '../utils/latex';
 import { generateResumePdf, createPdfResponse } from '../utils/pdf';
 import { ResumeRequest } from '../types';
 
@@ -40,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Load and fill LaTeX template
     const template = loadResumeTemplate();
-    const filledLatex = fillLatexTemplate(template.content, resumeData);
+    const filledLatex = fillResumeTemplate(template.content, resumeData);
 
     // Convert to HTML
     const html = latexToHtml(filledLatex);

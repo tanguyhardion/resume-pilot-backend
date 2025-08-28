@@ -5,7 +5,9 @@
   "dependencies": {
     "@langchain/openai": "^0.6.9",
     "langchain": "^0.3.31",
+    "latex.js": "^0.12.6",
     "puppeteer": "^24.17.0",
+    "vercel": "^46.0.4",
     "zod": "^3.25.76"
   },
   "devDependencies": {
