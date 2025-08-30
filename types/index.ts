@@ -33,6 +33,11 @@ export interface GenerateResponse {
   filename: string;
 }
 
+export interface DualFileResponse {
+  zipBuffer: Buffer;
+  filename: string;
+}
+
 export interface LatexTemplate {
   content: string;
 }

@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateMasterPassword, setCorsHeaders, handleOptionsRequest, createErrorResponse, createSuccessResponse } from '../utils/auth';
 import { ResumeAI } from '../utils/ai';
 import { loadCoverLetterTemplate, fillCoverLetterTemplate, latexToHtml } from '../utils/latex';
-import { generateCoverLetterPdf, createPdfResponse } from '../utils/pdf';
+import { generateCoverLetterPdf, createPdfResponse, createDualFileZip, createZipResponse } from '../utils/pdf';
 import { CoverLetterRequest } from '../types';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -56,16 +56,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Generate PDF with optimized cover letter formatting
     const { pdfBuffer, filename } = await generateCoverLetterPdf(html, `cover_letter_${Date.now()}.pdf`);
 
-    // Create PDF response with proper headers
-    const pdfResponse = createPdfResponse(pdfBuffer, filename);
+    // Create ZIP containing both PDF and TeX files
+    const baseName = `cover_letter_${Date.now()}`;
+    const { zipBuffer, filename: zipFilename } = await createDualFileZip(pdfBuffer, filledLatex, baseName);
+
+    // Create ZIP response with proper headers
+    const zipResponse = createZipResponse(zipBuffer, zipFilename);
 
     // Set response headers
-    Object.entries(pdfResponse.headers).forEach(([key, value]) => {
+    Object.entries(zipResponse.headers).forEach(([key, value]) => {
       res.setHeader(key, value);
     });
 
-    // Send PDF
-    res.status(200).send(Buffer.from(pdfBuffer));
+    // Send ZIP containing both PDF and TeX
+    res.status(200).send(zipBuffer);
 
   } catch (error) {
     console.error('Error generating cover letter:', error);

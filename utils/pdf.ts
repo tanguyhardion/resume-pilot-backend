@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import JSZip from "jszip";
 
 /**
  * HTML to PDF conversion using Puppeteer
@@ -125,6 +126,50 @@ export function createPdfResponse(pdfBuffer: Uint8Array, filename: string) {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${filename}"`,
       "Content-Length": pdfBuffer.length.toString(),
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
+  };
+}
+
+/**
+ * Create ZIP archive containing both PDF and TeX files
+ */
+export async function createDualFileZip(
+  pdfBuffer: Uint8Array,
+  texContent: string,
+  baseName: string
+): Promise<{
+  zipBuffer: Buffer;
+  filename: string;
+}> {
+  const zip = new JSZip();
+
+  // Add PDF file to zip
+  zip.file(`${baseName}.pdf`, pdfBuffer);
+  
+  // Add TeX file to zip
+  zip.file(`${baseName}.tex`, texContent);
+
+  // Generate zip buffer
+  const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+
+  return {
+    zipBuffer,
+    filename: `${baseName}.zip`
+  };
+}
+
+/**
+ * Create HTTP response object for ZIP downloads containing both PDF and TeX
+ */
+export function createZipResponse(zipBuffer: Buffer, filename: string) {
+  return {
+    headers: {
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Length": zipBuffer.length.toString(),
       "Cache-Control": "no-cache, no-store, must-revalidate",
       Pragma: "no-cache",
       Expires: "0",

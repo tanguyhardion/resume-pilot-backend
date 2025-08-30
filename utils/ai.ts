@@ -86,9 +86,11 @@ export class ResumeAI {
 You are a professional resume writer. Based on the job offer below, create a tailored resume data structure.
 
 Job Offer:
+
 {jobOffer}
 
-Personal Information (if provided):
+Personal Information:
+
 {personalInfo}
 
 Guidelines:
@@ -124,9 +126,11 @@ Create a professional resume structure that highlights the most relevant qualifi
 You are a professional cover letter writer. Based on the job offer below, create a compelling cover letter content.
 
 Job Offer:
+
 {jobOffer}
 
 Personal Information (if provided):
+
 {personalInfo}
 
 Write a professional cover letter body (3-4 paragraphs) that:
@@ -154,5 +158,5 @@ Return only the cover letter content, no additional formatting or text.
 
     const response = await this.llm.invoke(formattedPrompt);
     return response.content as string;
-}
+  }
 }
