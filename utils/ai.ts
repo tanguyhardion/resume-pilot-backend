@@ -78,7 +78,7 @@ export class ResumeAI {
 
   async generateResumeData(
     jobOffer: string,
-    personalInfo?: any
+    personalInfo: string
   ): Promise<ResumeData> {
     const llmWithStructured = this.llm.withStructuredOutput(resumeDataSchema);
 
@@ -120,7 +120,7 @@ Create a professional resume structure that highlights the most relevant qualifi
 
   async generateCoverLetterContent(
     jobOffer: string,
-    personalInfo?: any
+    personalInfo: string
   ): Promise<string> {
     const prompt = PromptTemplate.fromTemplate(`
 You are a professional cover letter writer. Based on the job offer below, create a compelling cover letter content.
@@ -129,7 +129,7 @@ Job Offer:
 
 {jobOffer}
 
-Personal Information (if provided):
+Personal Information:
 
 {personalInfo}
 

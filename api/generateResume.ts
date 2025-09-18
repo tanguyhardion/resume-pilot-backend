@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { validateMasterPassword, setCorsHeaders, handleOptionsRequest, createErrorResponse, createSuccessResponse } from '../utils/auth';
 import { ResumeAI } from '../utils/ai';
 import { loadResumeTemplate, fillResumeTemplate, latexToHtml } from '../utils/latex';
-import { generateResumePdf, createPdfResponse, createDualFileZip, createZipResponse } from '../utils/pdf';
+import { generateResumePdf, createDualFileZip, createZipResponse } from '../utils/pdf';
 import { ResumeRequest } from '../types';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
